@@ -79,7 +79,9 @@ exports.resendVerificationEmail = async (req, res) => {
     // at first find registered email
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(400).json({ error: "email provided not found in our system" });
+      return res
+        .status(400)
+        .json({ error: "email provided not found in our system" });
     }
     //check if already verified
     if (user.isVerified) {
@@ -98,7 +100,7 @@ exports.resendVerificationEmail = async (req, res) => {
 
     //send Email
     sendEmail({
-      from: "no-reply@recipe.com.npu",
+      from: "'RECIPIX' '<no-reply@recipe.com.np>'",
       to: user.email,
       subject: "Email Verification Link",
       text: `Hello, \n\n Please verify your account by clicking the link below: \n http://${req.headers.host}\/user\/confirmation\/${token.token}`,

@@ -44,7 +44,9 @@ exports.recipeList = async (req, res) => {
 //finding recipe by id
 exports.recipeById = async (req, res, next, id) => {
   try {
-    let recipe = await Recipe.findById(id);
+    let recipe = await Recipe.findById(id)
+      .populate("category")
+      .populate("owner");
     req.recipe = recipe;
     next();
   } catch (error) {
@@ -127,4 +129,25 @@ exports.listBySearch = async (req, res) => {
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
+};
+
+//List related to same category
+exports.relatedList = async (req, res) => {
+  let singleRecipe = await Recipe.findById(req.params.recipeId);
+  let limit = req.query.limit ? parseInt(req.query.limit) : 5;
+  if (!singleRecipe) {
+    return res
+      .status(400)
+      .json({ error: `Recipe with ID ${req.params.id} not found` });
+  }
+  let recipe = await Recipe.find({
+    _id: { $ne: singleRecipe },
+    category: singleRecipe.category,
+  })
+    .limit(limit)
+    .populate("category", "category_Name");
+  if (!recipe) {
+    return res.status(400).json({ error: "something 2 went wrong" });
+  }
+  res.send(recipe);
 };

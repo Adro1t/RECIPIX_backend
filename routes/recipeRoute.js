@@ -7,6 +7,7 @@ const {
   deleteRecipe,
   updateRecipe,
   listBySearch,
+  relatedList,
 } = require("../controller/recipe");
 const { recipeValidation } = require("../validation");
 const upload = require("../middleware/file-upload");
@@ -19,6 +20,8 @@ router.delete("/delete/:recipeId", deleteRecipe);
 router.put("/update/:recipeId", recipeValidation, updateRecipe);
 
 router.post("/list/search", listBySearch);
+
+router.get("/related/:recipeId", relatedList);
 
 router.param("recipeId", recipeById);
 module.exports = router;
