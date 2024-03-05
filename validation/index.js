@@ -52,7 +52,11 @@ exports.userValidation = [
   //username
   body("name").notEmpty().withMessage("Username is required"),
   //email
-  body("email").notEmpty().withMessage("Email is required").isEmail().withMessage("Format incorrect"),
+  body("email")
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Format incorrect"),
   //password
   body("password")
     .notEmpty()

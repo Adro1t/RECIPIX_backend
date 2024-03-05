@@ -1,8 +1,31 @@
 const Recipe = require("../model/recipeModel");
+const Ingredient = require("../model/ingredientModel");
 
 //post recipe
 exports.postRecipe = async (req, res) => {
   try {
+    const exception = ["a", "bag", "full", "handful", "of"];
+    let x = [];
+    const array = req.body.ingredients.split(",");
+    for (const item of array) {
+      const words = item.split(" ");
+      // Concatenate the words from each sentence to the allWords array
+
+      for (const word of words) {
+        if (!exception.includes(word)) {
+          x.push(word);
+          const existingIngredient = await Ingredient.findOne({
+            ingredientName: word,
+          });
+          if (existingIngredient) {
+            continue;
+          }
+          let ingredient = new Ingredient({ ingredientName: word });
+          ingredient.save();
+        }
+      }
+    }
+
     let recipe = new Recipe({
       recipe_name: req.body.recipe_name,
       ingredients: req.body.ingredients,
@@ -14,7 +37,9 @@ exports.postRecipe = async (req, res) => {
       image: req.file.path,
       category: req.body.category,
       owner: req.body.owner,
+      ingredientArray: x,
     });
+
     await recipe.save();
     res.json({ recipe });
   } catch (error) {
