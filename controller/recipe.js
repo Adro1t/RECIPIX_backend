@@ -4,15 +4,25 @@ const Ingredient = require("../model/ingredientModel");
 //post recipe
 exports.postRecipe = async (req, res) => {
   try {
-    const exception = ["a", "bag", "full", "handful", "of"];
+    const exception = [
+      "a",
+      "bag",
+      "full",
+      "cup",
+      "of",
+      "teaspoon",
+      "tablespoon",
+      "to",
+      "approximately",
+      "optional",
+    ];
     let x = [];
     const array = req.body.ingredients.split(",");
     for (const item of array) {
       const words = item.split(" ");
-      // Concatenate the words from each sentence to the allWords array
 
       for (const word of words) {
-        if (!exception.includes(word)) {
+        if (isNaN(parseInt(word)) && !exception.includes(word)) {
           x.push(word);
           const existingIngredient = await Ingredient.findOne({
             ingredientName: word,

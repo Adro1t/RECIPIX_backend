@@ -142,9 +142,9 @@ exports.signIn = async (req, res) => {
     res.cookie("C", token, { expire: Date.now() + 1800000 });
 
     //return response with userinfo and token to frontend
-    const { name, _id, role } = user;
+    const { name, _id, role, preferences } = user;
 
-    res.json({ token, user: { name, _id, email, role } });
+    res.json({ token, user: { name, _id, email, role, preferences } });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

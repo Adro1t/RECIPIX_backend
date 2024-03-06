@@ -4,7 +4,7 @@ const ingredientSchema = new mongoose.Schema(
   {
     ingredientName: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
       unique: true,
     },

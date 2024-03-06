@@ -29,9 +29,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    saved_recipes: {
-      type: ObjectId,
-      ref: "Recipe",
+    preferences: {
+      type: [String],
+    },
+    likedRecipes: {
+      type: [String],
     },
   },
   { timestamps: true }
@@ -56,7 +58,10 @@ userSchema.methods = {
   encryptPassword: function (password) {
     if (!password) return "";
     try {
-      return crypto.createHmac("sha1", this.salt).update(password).digest("hex");
+      return crypto
+        .createHmac("sha1", this.salt)
+        .update(password)
+        .digest("hex");
     } catch (error) {
       return "";
     }
