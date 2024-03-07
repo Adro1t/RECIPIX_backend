@@ -11,7 +11,7 @@ const {
   resendVerificationEmail,
   forgetPassword,
   resetPassword,
-  updateUser,
+  updatePreferences,
 } = require("../controller/user");
 const { userValidation } = require("../validation");
 
@@ -27,6 +27,8 @@ router.post("/confirmation/:token", postConfirmation);
 router.post("/resend/confirmation", resendVerificationEmail);
 router.post("/password/forget", forgetPassword);
 router.put("/password/reset/:token", resetPassword);
+
+router.put("/update/preferences", updatePreferences);
 
 router.param("userId", userById);
 module.exports = router;

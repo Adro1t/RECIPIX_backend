@@ -142,9 +142,9 @@ exports.signIn = async (req, res) => {
     res.cookie("C", token, { expire: Date.now() + 1800000 });
 
     //return response with userinfo and token to frontend
-    const { name, _id, role, preferences } = user;
+    const { name, _id, role } = user;
 
-    res.json({ token, user: { name, _id, email, role, preferences } });
+    res.json({ token, user: { name, _id, email, role } });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -249,5 +249,24 @@ exports.resetPassword = async (req, res) => {
     res.json({ message: "password reset successful" });
   } catch (error) {
     return res.status(400).json({ error: error.message });
+  }
+};
+
+exports.updatePreferences = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(400).json({ error: "user not found" });
+    }
+    newPreferences = req.body.preferences;
+    const existingPreferences = user.preferences || []; // Handle cases where preferences might be undefined
+    const updatedPreferences = [...existingPreferences, ...newPreferences];
+
+    user.preferences = updatedPreferences;
+    await user.save();
+
+    res.json({ user, message: "preferences updated" });
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
   }
 };
