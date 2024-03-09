@@ -156,8 +156,26 @@ exports.signOut = (req, res) => {
   res.json({ message: "SignOut Success" });
 };
 
+// exports.userList = (req, res) => {
+//   User.find()
+//     .populate("likedRecipes")
+//     .then((users) => {
+//       res.json(users);
+//     })
+//     .catch((error) => {
+//       res.status(400).json({ error: error.message });
+//     });
+// };
 exports.userList = (req, res) => {
   User.find()
+    .populate({
+      path: "likedRecipes",
+      populate: {
+        // Nested populate for category
+        path: "category",
+        model: "Category", // Specify the Category model
+      },
+    })
     .then((users) => {
       res.json(users);
     })
@@ -168,6 +186,14 @@ exports.userList = (req, res) => {
 
 exports.userById = (req, res, next, id) => {
   User.findById(id)
+    .populate({
+      path: "likedRecipes",
+      populate: {
+        // Nested populate for category
+        path: "category",
+        model: "Category", // Specify the Category model
+      },
+    })
     .then((user) => {
       req.user = user;
       next();
@@ -266,6 +292,48 @@ exports.updatePreferences = async (req, res) => {
     await user.save();
 
     res.json({ user, message: "preferences updated" });
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+};
+
+exports.updateLikedRecipes = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(400).json({ error: "user not found" });
+    }
+    newLikedRecipes = req.body.likedRecipes;
+    existingLikedRecipes = user.likedRecipes || [];
+
+    const updatedLikedRecipes = existingLikedRecipes.concat(
+      newLikedRecipes.filter(
+        (recipeId) => !existingLikedRecipes.includes(recipeId)
+      )
+    );
+
+    user.likedRecipes = updatedLikedRecipes;
+    await user.save();
+
+    res.json({ user, message: "likedRecipes updated" });
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+};
+
+exports.deleteLikedRecipes = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(400).json({ error: "user not found" });
+    }
+    deleteRecipe = req.body.deleteRecipe;
+    const index = user.likedRecipes.indexOf(deleteRecipe);
+    user.likedRecipes.splice(index, 1);
+
+    await user.save();
+
+    res.json({ user, message: "likedRecipes deleted" });
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }

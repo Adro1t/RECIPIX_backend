@@ -12,6 +12,8 @@ const {
   forgetPassword,
   resetPassword,
   updatePreferences,
+  updateLikedRecipes,
+  deleteLikedRecipes,
 } = require("../controller/user");
 const { userValidation } = require("../validation");
 
@@ -29,6 +31,8 @@ router.post("/password/forget", forgetPassword);
 router.put("/password/reset/:token", resetPassword);
 
 router.put("/update/preferences", updatePreferences);
+router.put("/update/likedrecipes", updateLikedRecipes);
+router.delete("/delete/likedrecipes", deleteLikedRecipes);
 
 router.param("userId", userById);
 module.exports = router;

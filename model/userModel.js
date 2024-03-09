@@ -33,7 +33,8 @@ const userSchema = new mongoose.Schema(
       type: [String],
     },
     likedRecipes: {
-      type: [String],
+      type: [ObjectId],
+      ref: "Recipe",
     },
   },
   { timestamps: true }
